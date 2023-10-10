@@ -20,9 +20,15 @@ namespace TestWorkAPI.API.Requests
         public int Age { get; set; }
 
         /// <summary>
+        /// Age validate.
+        /// </summary>
+        public bool ValidYearRange => Age > 0;
+
+        /// <summary>
         /// User email.
         /// </summary>      
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
     }
 }

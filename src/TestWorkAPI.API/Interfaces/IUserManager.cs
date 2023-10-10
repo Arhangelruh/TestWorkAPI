@@ -12,7 +12,7 @@ namespace TestWorkAPI.API.Interfaces
         /// Get all users.
         /// </summary>
         /// <returns>user's models</returns>
-        Task<List<UserViewModel>> GetAllUsersAsync();
+        Task<List<UserViewModel>> GetAllUsersAsync(ListParameters listParameters);
 
         /// <summary>
         /// Get user.

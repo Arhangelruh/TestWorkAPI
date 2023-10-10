@@ -12,7 +12,7 @@ namespace TestWorkAPI.API.Interfaces
         /// Get all roles.
         /// </summary>
         /// <returns>All role models</returns>
-        Task<List<RoleViewModel>> GetAllRolesAsync();
+        Task<List<RoleViewModel>> GetAllRolesAsync(ListParameters listParameters);
 
         /// <summary>
         /// Get roles by user.

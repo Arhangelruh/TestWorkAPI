@@ -24,10 +24,10 @@ namespace TestWorkAPI.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] ListParameters listParameters)
         {
             var users = new List<UserViewModel>();
-            var alluser = await _userManager.GetAllUsersAsync();
+            var alluser = await _userManager.GetAllUsersAsync(listParameters);
 
             foreach (var user in alluser)
             {
@@ -83,6 +83,11 @@ namespace TestWorkAPI.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] UserRequest request)
         {
             request = request ?? throw new ArgumentNullException(nameof(request));
+           
+            if (!request.ValidYearRange)
+            {
+                return BadRequest("Invalid Age");
+            }
 
             if (ModelState.IsValid)
             {

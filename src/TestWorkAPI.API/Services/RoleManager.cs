@@ -62,10 +62,15 @@ namespace TestWorkAPI.API.Services
             }
         }
 
-        public async Task<List<RoleViewModel>> GetAllRolesAsync()
+        public async Task<List<RoleViewModel>> GetAllRolesAsync(ListParameters listParameters)
         {
             var roleList = new List<RoleViewModel>();
-            var roles = await _repositoryRoles.GetAll().AsNoTracking().ToListAsync();
+            var roles = await _repositoryRoles.GetAll()
+                .OrderBy(role => role.Id)
+                .Skip((listParameters.PageNumber - 1) * listParameters.PageSize)
+                .Take(listParameters.PageSize)
+                .AsNoTracking()
+                .ToListAsync();
 
             foreach (var role in roles)
             {

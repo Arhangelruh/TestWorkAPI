@@ -19,9 +19,9 @@ namespace TestWorkAPI.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] ListParameters listParameters)
         {            
-            return Ok(await _roleManager.GetAllRolesAsync());
+            return Ok(await _roleManager.GetAllRolesAsync(listParameters));
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]

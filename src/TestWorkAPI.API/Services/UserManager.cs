@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq.Expressions;
 using TestWorkAPI.API.Interfaces;
 using TestWorkAPI.API.Models;
 using TestWorkAPI.API.Requests;
@@ -107,10 +108,34 @@ namespace TestWorkAPI.API.Services
             await _repositoryUsersRole.SaveChangesAsync();
         }
 
-        public async Task<List<UserViewModel>> GetAllUsersAsync()
+        public async Task<List<UserViewModel>> GetAllUsersAsync(ListParameters listParameters)
         {
+            var request = _repositoryUsers.GetAll();
+
+            if (listParameters.searchTeam != null)
+            {
+                request = request.Where(
+                u => u.Name.Contains(listParameters.searchTeam) ||
+                u.Age.ToString().Contains(listParameters.searchTeam) ||
+                u.Email.Contains(listParameters.searchTeam)
+                );
+            }
+
+            if (listParameters.sortOrder?.ToLower() == "desc")
+            {
+                request = request.OrderByDescending(GetSortProperty(listParameters));
+            }
+            else
+            {
+                request = request.OrderBy(GetSortProperty(listParameters));
+            }
+
             var usersList = new List<UserViewModel>();
-            var users = await _repositoryUsers.GetAll().AsNoTracking().ToListAsync();
+            var users = await request
+                .Skip((listParameters.PageNumber - 1) * listParameters.PageSize)
+                .Take(listParameters.PageSize)
+                .AsNoTracking()
+                .ToListAsync();
 
             foreach (var user in users)
             {
@@ -125,6 +150,16 @@ namespace TestWorkAPI.API.Services
             }
             return usersList;
         }
+
+        private static Expression<Func<User, string>> GetSortProperty(ListParameters listParameters)=>
+        listParameters.sortColumn?.ToLower() switch
+            {
+                "name"=> user => user.Name,
+                "age" => user => user.Age.ToString(),
+                "email" => user => user.Email,
+                _ => user => user.Id.ToString()
+            };
+
 
         public async Task<UserViewModel> GetUserByIdAsync(int userid)
         {
