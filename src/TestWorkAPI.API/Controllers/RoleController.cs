@@ -21,8 +21,7 @@ namespace TestWorkAPI.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] ListParameters listParameters)
         {            
-            return Ok(await _roleManager.GetAllRolesAsync(listParameters));
-        }
+            return Ok(await _roleManager.GetAllRolesAsync(listParameters));        }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

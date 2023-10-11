@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Linq.Expressions;
 using TestWorkAPI.API.Interfaces;
 using TestWorkAPI.API.Models;
@@ -29,7 +30,7 @@ namespace TestWorkAPI.API.Controllers
             var users = new List<UserViewModel>();
             var alluser = await _userManager.GetAllUsersAsync(listParameters);
 
-            foreach (var user in alluser)
+            foreach (var user in alluser.Items)
             {
                 var roles = await _roleManager.GetUserRolesAsync(user.Id);
 
@@ -43,6 +44,15 @@ namespace TestWorkAPI.API.Controllers
                 };
                 users.Add(tempUser);
             }
+            var metadata = new
+            {
+                alluser.Page,
+                alluser.PageSize,
+                alluser.TotalCount,
+                alluser.HasNextPage,                
+                alluser.HasPreviousPage
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
             return Ok(users);
         }

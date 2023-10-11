@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Linq.Expressions;
+using TestWorkAPI.API.Helpers;
 using TestWorkAPI.API.Interfaces;
 using TestWorkAPI.API.Models;
 using TestWorkAPI.API.Requests;
@@ -8,6 +9,7 @@ using TestWorkAPI.DB.Models;
 
 namespace TestWorkAPI.API.Services
 {
+    /// <inheritdoc cref="IUserManager"/>
     public class UserManager : IUserManager
     {
         private readonly IRepository<User> _repositoryUsers;
@@ -108,7 +110,7 @@ namespace TestWorkAPI.API.Services
             await _repositoryUsersRole.SaveChangesAsync();
         }
 
-        public async Task<List<UserViewModel>> GetAllUsersAsync(ListParameters listParameters)
+        public async Task<PageList<User>> GetAllUsersAsync(ListParameters listParameters)
         {
             var request = _repositoryUsers.GetAll();
 
@@ -121,6 +123,7 @@ namespace TestWorkAPI.API.Services
                 );
             }
 
+
             if (listParameters.sortOrder?.ToLower() == "desc")
             {
                 request = request.OrderByDescending(GetSortProperty(listParameters));
@@ -130,25 +133,8 @@ namespace TestWorkAPI.API.Services
                 request = request.OrderBy(GetSortProperty(listParameters));
             }
 
-            var usersList = new List<UserViewModel>();
-            var users = await request
-                .Skip((listParameters.PageNumber - 1) * listParameters.PageSize)
-                .Take(listParameters.PageSize)
-                .AsNoTracking()
-                .ToListAsync();
-
-            foreach (var user in users)
-            {
-                var userModel = new UserViewModel
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Age = user.Age,
-                    Email = user.Email
-                };
-                usersList.Add(userModel);
-            }
-            return usersList;
+            var user = await PageList<User>.CreatePageAsync(request, listParameters.PageNumber, listParameters.PageSize);
+            return user;
         }
 
         private static Expression<Func<User, string>> GetSortProperty(ListParameters listParameters)=>
@@ -159,7 +145,6 @@ namespace TestWorkAPI.API.Services
                 "email" => user => user.Email,
                 _ => user => user.Id.ToString()
             };
-
 
         public async Task<UserViewModel> GetUserByIdAsync(int userid)
         {
@@ -173,13 +158,13 @@ namespace TestWorkAPI.API.Services
             }
 
             var userModel = new UserViewModel
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Age = user.Age,
-                    Email = user.Email
-                };
-                return userModel;
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Age = user.Age,
+                Email = user.Email
+            };
+            return userModel;
         }
 
         public async Task UpdateUserAsync(UserViewModel model)

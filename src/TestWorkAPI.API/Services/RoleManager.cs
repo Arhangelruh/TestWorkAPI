@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Linq.Expressions;
+using TestWorkAPI.API.Helpers;
 using TestWorkAPI.API.Interfaces;
 using TestWorkAPI.API.Models;
 using TestWorkAPI.API.Requests;
@@ -6,6 +9,7 @@ using TestWorkAPI.DB.Models;
 
 namespace TestWorkAPI.API.Services
 {
+    /// <inheritdoc cref="IRoleManager"/>
     public class RoleManager : IRoleManager
     {
         private readonly IRepository<Role> _repositoryRoles;
@@ -62,45 +66,52 @@ namespace TestWorkAPI.API.Services
             }
         }
 
-        public async Task<List<RoleViewModel>> GetAllRolesAsync(ListParameters listParameters)
+        public async Task<PageList<Role>> GetAllRolesAsync(ListParameters listParameters)
         {
-            var roleList = new List<RoleViewModel>();
-            var roles = await _repositoryRoles.GetAll()
-                .OrderBy(role => role.Id)
-                .Skip((listParameters.PageNumber - 1) * listParameters.PageSize)
-                .Take(listParameters.PageSize)
-                .AsNoTracking()
-                .ToListAsync();
+            var request = _repositoryRoles.GetAll();
 
-            foreach (var role in roles)
+            if (listParameters.searchTeam != null)
             {
-                var roleModel = new RoleViewModel
-                {
-                    Id = role.Id,
-                    RoleName = role.RoleName
-                };
-                roleList.Add(roleModel);
+                request = request.Where(u => u.RoleName.Contains(listParameters.searchTeam));
             }
-            return roleList;
+
+            if (listParameters.sortOrder?.ToLower() == "desc")
+            {
+                request = request.OrderByDescending(GetSortProperty(listParameters));
+            }
+            else
+            {
+                request = request.OrderBy(GetSortProperty(listParameters));
+            }
+
+            var roles = await PageList<Role>.CreatePageAsync(request, listParameters.PageNumber, listParameters.PageSize);
+            return roles;
         }
+
+        private static Expression<Func<Role, object>> GetSortProperty(ListParameters listParameters) =>
+              listParameters.sortColumn?.ToLower() switch
+                  {
+                     "name" => role => role.RoleName,
+                      _ => role => role.Id
+                  };
 
         public async Task<RoleViewModel> GetRoleByIdAsync(int roleid)
         {
             var role = await _repositoryRoles
                 .GetEntityAsync(role =>
                     role.Id == roleid);
-            
+
             if (role is null)
             {
                 throw new KeyNotFoundException("User role not found");
             }
 
             var roleModel = new RoleViewModel
-                {
-                    Id = role.Id,
-                   RoleName = role.RoleName
-                };
-                return roleModel;            
+            {
+                Id = role.Id,
+                RoleName = role.RoleName
+            };
+            return roleModel;
         }
 
         public async Task<List<RoleViewModel>> GetUserRolesAsync(int userid)
@@ -115,7 +126,7 @@ namespace TestWorkAPI.API.Services
 
             if (userRoles.Any())
             {
-                foreach(var role in userRoles)
+                foreach (var role in userRoles)
                 {
                     var request = await _repositoryRoles.GetEntityWithoutTrackingAsync(rolerequest => rolerequest.Id.Equals(role.RoleId));
                     var roleToList = new RoleViewModel

@@ -1,5 +1,7 @@
-﻿using TestWorkAPI.API.Models;
+﻿using TestWorkAPI.API.Helpers;
+using TestWorkAPI.API.Models;
 using TestWorkAPI.API.Requests;
+using TestWorkAPI.DB.Models;
 
 namespace TestWorkAPI.API.Interfaces
 {
@@ -11,8 +13,9 @@ namespace TestWorkAPI.API.Interfaces
         /// <summary>
         /// Get all users.
         /// </summary>
-        /// <returns>user's models</returns>
-        Task<List<UserViewModel>> GetAllUsersAsync(ListParameters listParameters);
+        /// <param name="listParameters">Request parsmeters</param>
+        /// <returns>user's models and metadata</returns>
+        Task<PageList<User>> GetAllUsersAsync(ListParameters listParameters);
 
         /// <summary>
         /// Get user.
@@ -61,7 +64,6 @@ namespace TestWorkAPI.API.Interfaces
         /// </summary>
         /// <param name="userid">User id</param>
         /// <param name="roleid">Role id</param>
-        /// <returns></returns>
         Task DeleteUserRole(int userid, int roleid);
     }
 }

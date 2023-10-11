@@ -1,5 +1,7 @@
-﻿using TestWorkAPI.API.Models;
+﻿using TestWorkAPI.API.Helpers;
+using TestWorkAPI.API.Models;
 using TestWorkAPI.API.Requests;
+using TestWorkAPI.DB.Models;
 
 namespace TestWorkAPI.API.Interfaces
 {
@@ -12,7 +14,7 @@ namespace TestWorkAPI.API.Interfaces
         /// Get all roles.
         /// </summary>
         /// <returns>All role models</returns>
-        Task<List<RoleViewModel>> GetAllRolesAsync(ListParameters listParameters);
+        Task<PageList<Role>> GetAllRolesAsync(ListParameters listParameters);
 
         /// <summary>
         /// Get roles by user.
