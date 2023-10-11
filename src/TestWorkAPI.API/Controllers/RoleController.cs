@@ -16,6 +16,11 @@ namespace TestWorkAPI.API.Controllers
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         }
 
+        /// <summary>
+        /// Get all roles.
+        /// </summary>
+        /// <param name="listParameters"></param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
@@ -38,6 +43,12 @@ namespace TestWorkAPI.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Create role.
+        /// </summary>
+        /// <param name="request">Role model.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,6 +66,13 @@ namespace TestWorkAPI.API.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Update role.
+        /// </summary>
+        /// <param name="id">Role Id.</param>
+        /// <param name="request">New role model.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -76,6 +94,11 @@ namespace TestWorkAPI.API.Controllers
             return Conflict();
         }
 
+        /// <summary>
+        /// Delete role by id.
+        /// </summary>
+        /// <param name="id">Role id.</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]

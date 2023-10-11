@@ -91,7 +91,7 @@ namespace TestWorkAPI.API.Services
         private static Expression<Func<Role, object>> GetSortProperty(ListParameters listParameters) =>
               listParameters.sortColumn?.ToLower() switch
                   {
-                     "name" => role => role.RoleName,
+                     "rolename" => role => role.RoleName,
                       _ => role => role.Id
                   };
 

@@ -22,6 +22,11 @@ namespace TestWorkAPI.API.Controllers
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
         }
 
+        /// <summary>
+        /// Get all users with params.
+        /// </summary>
+        /// <param name="listParameters">Parametres pages, filtering, and sorting by name,age,email.</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
@@ -57,6 +62,11 @@ namespace TestWorkAPI.API.Controllers
             return Ok(users);
         }
 
+        /// <summary>
+        /// Get user by id.
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
@@ -86,6 +96,12 @@ namespace TestWorkAPI.API.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Create user.
+        /// </summary>
+        /// <param name="request">User model.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -114,7 +130,13 @@ namespace TestWorkAPI.API.Controllers
             return BadRequest();
         }
 
-
+        /// <summary>
+        /// Update user by id.
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <param name="request">New User model.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -145,6 +167,11 @@ namespace TestWorkAPI.API.Controllers
             return Conflict();
         }
 
+        /// <summary>
+        /// Delete user by id.
+        /// </summary>
+        /// <param name="id">User Id.</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")]
@@ -154,6 +181,12 @@ namespace TestWorkAPI.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Add role to user by user id and role id.
+        /// </summary>
+        /// <param name="userid">User Id.</param>
+        /// <param name="roleid">Role Id.</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -174,6 +207,12 @@ namespace TestWorkAPI.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Delete role from user by user id and role id.
+        /// </summary>
+        /// <param name="userid">User Id.</param>
+        /// <param name="roleid">Role Id.</param>
+        /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
